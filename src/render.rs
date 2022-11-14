@@ -17,6 +17,7 @@ pub fn extract_uinodes(
             &Node,
             &GlobalTransform,
             &UiNineSlice,
+            &NineSliceMode,
             &ComputedVisibility,
             Option<&CalculatedClip>,
         )>,
@@ -25,7 +26,7 @@ pub fn extract_uinodes(
     let scale_factor = windows.scale_factor(WindowId::primary()) as f32;
 
     for (stack_index, entity) in ui_stack.uinodes.iter().enumerate() {
-        if let Ok((uinode, global_transform, nine_slice_component, visibility, clip)) =
+        if let Ok((uinode, global_transform, nine_slice, mode, visibility, clip)) =
             uinode_query.get(*entity)
         {
             if !visibility.is_visible() {
@@ -33,7 +34,7 @@ pub fn extract_uinodes(
             }
 
             // Skip loading nineslices
-            let Some(nine_slice) = nine_slices.get(&nine_slice_component.nine_slice) else {
+            let Some(nine_slice) = nine_slices.get(&nine_slice.0) else {
                 continue;
             };
 
@@ -70,7 +71,7 @@ pub fn extract_uinodes(
             for y in 0..3 {
                 for x in 0..3 {
                     if x == 1 || y == 1 {
-                        match nine_slice_component.mode {
+                        match mode {
                             NineSliceMode::Stretch => (),
                             NineSliceMode::Repeat => {
                                 todo!()

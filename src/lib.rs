@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
 use bevy::render::{RenderApp, RenderStage};
-use bevy::ui::RenderUiSystem;
+use bevy::ui::{RenderUiSystem, FocusPolicy};
 
 use loader::NineSliceLoader;
 
@@ -18,16 +18,48 @@ pub struct NineSlice {
     pub content: Rect,
 }
 
-#[derive(Component)]
-pub struct UiNineSlice {
-    pub nine_slice: Handle<NineSlice>,
-    pub mode: NineSliceMode,
-}
+#[derive(Component, Clone, Debug, Default)]
+pub struct UiNineSlice(pub Handle<NineSlice>);
 
+#[derive(Component, Clone, Debug, Default)]
 pub enum NineSliceMode {
+    #[default]
     Stretch,
     Repeat,
     Mirror,
+}
+
+/// A UI node that is a nine slice
+#[derive(Bundle, Clone, Debug, Default)]
+pub struct NineSliceBundle {
+    /// Describes the size of the node
+    pub node: Node,
+    /// Describes the style including flexbox settings
+    pub style: Style,
+    /// Configures how the nine slice should scale
+    pub image_mode: NineSliceMode,
+    /// The calculated size based on the given image
+    pub calculated_size: CalculatedSize,
+    /// The image of the node
+    pub nine_slice: UiNineSlice,
+    /// Whether this node should block interaction with lower nodes
+    pub focus_policy: FocusPolicy,
+    /// The transform of the node
+    ///
+    /// This field is automatically managed by the UI layout system.
+    /// To alter the position of the `NodeBundle`, use the properties of the [`Style`] component.
+    pub transform: Transform,
+    /// The global transform of the node
+    ///
+    /// This field is automatically managed by the UI layout system.
+    /// To alter the position of the `NodeBundle`, use the properties of the [`Style`] component.
+    pub global_transform: GlobalTransform,
+    /// Describes the visibility properties of the node
+    pub visibility: Visibility,
+    /// Algorithmically-computed indication of whether an entity is visible and should be extracted for rendering
+    pub computed_visibility: ComputedVisibility,
+    /// Indicates the depth at which the node should appear in the UI
+    pub z_index: ZIndex,
 }
 
 impl Plugin for NineSlicePlugin {
