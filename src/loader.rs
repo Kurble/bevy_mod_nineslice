@@ -51,7 +51,7 @@ impl AssetLoader for NineSliceLoader {
             }
 
             margins.max.x = width as f32 - margins.max.x;
-            content.max.x = width as f32 - margins.max.x;
+            content.max.x = width as f32 - content.max.x;
 
             for y in 0..height {
                 let begin = y as f32;
@@ -68,8 +68,8 @@ impl AssetLoader for NineSliceLoader {
                 }
             }
 
-            margins.max.y = width as f32 - margins.max.y;
-            content.max.y = width as f32 - margins.max.y;
+            margins.max.y = height as f32 - margins.max.y;
+            content.max.y = height as f32 - content.max.y;
 
             let image = load_context.set_labeled_asset(
                 "Image",

@@ -1,6 +1,5 @@
 use bevy::render::Extract;
 use bevy::ui::*;
-use bevy::window::WindowId;
 use bevy::{math::vec2, prelude::*};
 
 use crate::{NineSlice, NineSliceMode, UiNineSlice};
@@ -11,7 +10,6 @@ pub fn extract_uinodes(
     nine_slices: Extract<Res<Assets<NineSlice>>>,
     ui_stack: Extract<Res<UiStack>>,
     ui_scale: Extract<Res<UiScale>>,
-    windows: Extract<Res<Windows>>,
     uinode_query: Extract<
         Query<(
             &Node,
@@ -23,8 +21,6 @@ pub fn extract_uinodes(
         )>,
     >,
 ) {
-    let scale_factor = windows.scale_factor(WindowId::primary()) as f32;
-
     for (stack_index, entity) in ui_stack.uinodes.iter().enumerate() {
         if let Ok((uinode, global_transform, nine_slice, mode, visibility, clip)) =
             uinode_query.get(*entity)
@@ -59,12 +55,13 @@ pub fn extract_uinodes(
                     transform: global_transform.compute_matrix()
                         * Mat4::from_scale(scale.extend(1.0))
                         * Mat4::from_translation((bs * -0.5 + rect.center()).extend(0.0)),
-                    background_color: Color::WHITE,
+                    color: Color::WHITE,
                     rect: uv,
                     image: nine_slice.image.clone_weak(),
                     atlas_size: Some(image.size()),
                     clip: clip.map(|clip| clip.clip),
-                    scale_factor,
+                    flip_x: false,
+                    flip_y: false,
                 });
             };
 

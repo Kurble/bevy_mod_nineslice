@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy::reflect::TypeUuid;
-use bevy::render::{RenderApp, RenderStage};
-use bevy::ui::{RenderUiSystem, FocusPolicy};
+use bevy::render::RenderApp;
+use bevy::ui::{FocusPolicy, RenderUiSystem};
 
 use loader::NineSliceLoader;
 
@@ -71,9 +71,10 @@ impl Plugin for NineSlicePlugin {
             return;
         };
 
-        render_app.add_system_to_stage(
-            RenderStage::Extract,
-            render::extract_uinodes.after(RenderUiSystem::ExtractNode),
+        render_app.add_system(
+            render::extract_uinodes
+                .after(RenderUiSystem::ExtractNode)
+                .in_schedule(ExtractSchedule),
         );
     }
 }
